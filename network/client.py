@@ -25,7 +25,7 @@ class Client:
                     print('sending: ' + self.get)
                     client.send(self.get.encode())
                     print('get sent')
-                    data = client.recv(4096).decode()
+                    data = self.receive_command(client)
                     self.get_handler(data)
             except Exception as e:
                 print(e)
@@ -33,6 +33,13 @@ class Client:
         thread.start()
         return thread
 
+    def receive_command(self, connection):
+        message = ''
+        while message[-1:] != '\n':
+            data = connection.recv(1)
+            message = message + data.decode()
+        return message
+    
     def client_get(self):
         return self.get
 

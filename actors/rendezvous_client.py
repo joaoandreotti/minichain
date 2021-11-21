@@ -1,15 +1,16 @@
-from client import *
+from network import client
 import time
 
-class RendezvousClient(Client):
+class RendezvousClient(client.Client):
     connections = []
 
-    RENDEZVOUS_HELLO = 'HELLO MINICHAIN'
+    RENDEZVOUS_HELLO = 'HELLO MINICHAIN '
     RENDEZVOUS_GET = 'GET PEERS'
 
     def __init__(self, server_tuple, listener_port):
-        self.RENDEZVOUS_HELLO = self.RENDEZVOUS_HELLO + ' ' + str(listener_port)
-        super(RendezvousClient, self).__init__(server_tuple, self.RENDEZVOUS_HELLO, self.RENDEZVOUS_GET)
+        self.RENDEZVOUS_HELLO = self.RENDEZVOUS_HELLO + str(listener_port).zfill(5)
+        super(RendezvousClient, self).__init__(server_tuple,\
+            self.RENDEZVOUS_HELLO, self.RENDEZVOUS_GET)
 
     def client_init(self):
         return self.connection_handler()

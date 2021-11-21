@@ -30,17 +30,15 @@ class Server:
         def handler(connection, address):
             client_string = ''
             try:
-                data = connection.recv(4096).decode()
-                if self.hello in data:
-                    client_string = self.hello_handler(connection.getsockname()[0], data)
-                    self.connections.append(client_string)
-                    while True:
-                        data = connection.recv(4096).decode()
-                        if len(data) == 0:
-                            break
-                        if self.get in data:
-                            message = self.get_handler(client_string, data)
-                            connection.sendall(message.encode())
+                data = self.receive_command(self.hello, connection)
+                client_string = self.hello_handler(connection, data)
+                self.connections.append(client_string)
+                while True:
+                    data = self.receive_command(self.get, connection)
+                    if len(data) == 0:
+                        break
+                    message = self.get_handler(client_string, data)
+                    connection.sendall(message.encode())
             except Exception as e:
                 print(e)
             finally:
@@ -48,6 +46,21 @@ class Server:
         thread = threading.Thread(target = handler, args = (connection, address,))
         thread.start()
         return thread
+
+    def receive_command(self, command, connection):
+        amount_to_receive = len(command)
+        message = ''
+        while amount_to_receive > 0:
+            data = connection.recv(amount_to_receive)
+            if len(data) == 0:
+                break
+            amount_to_receive -= len(data)
+            message = message + data.decode()
+        return message
+    
+    def get_ip_list(self, client_string):
+        ip_list = ';'.join([conn for conn in self.connections if conn != client_string])
+        return ip_list + '\n'
 
     def add_connection(self, connection):
         print(f'connection add: {connection}')
@@ -57,7 +70,7 @@ class Server:
         print(f'connection removed: {connection}')
         self.connections.remove(connection)
 
-    def hello_handler(self, ip, data):
+    def hello_handler(self, connection, data):
         return 'DEFAULT'
 
     def get_handler(self, client_string, data):

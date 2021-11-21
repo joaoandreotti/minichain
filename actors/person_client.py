@@ -1,9 +1,9 @@
-from client import *
+from network import client
 import time
 
-class PersonClient(Client):
-    PERSON_HELLO = 'HELLO PEER'
-    PERSON_GET = 'TRANSACTION'
+class PersonClient(client.Client):
+    PERSON_HELLO = 'HELLO PEER 00000'
+    PERSON_GET = 'SEND TRANSACTION'
 
     def __init__(self, server_tuple):
         super(PersonClient, self).__init__(server_tuple, self.PERSON_HELLO, self.PERSON_GET)
@@ -19,9 +19,5 @@ class PersonClient(Client):
             return self.connection_handler()
 
     def client_get(self):
-        #time.sleep(1)
-        pass
+        time.sleep(5)
         return self.get
-
-    def get_handler(self, data):
-        print('Transaction received: ' + data)

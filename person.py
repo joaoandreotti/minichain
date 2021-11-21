@@ -1,25 +1,24 @@
-import socket
 import time
 import threading
 import sys
-from server import *
-from rendezvous_client import *
-from person_client import *
+from actors import rendezvous_client
+from actors import person_client 
+from actors import person_server
 
-class Person(Server):
+class Person:
     PEER_HELLO = 'HELLO PEER'
     PEER_GET = ''
     persons = []
 
     def __init__(self, listener_port):
-        super(Person, self).__init__(listener_port, self.PEER_HELLO, self.PEER_GET)
         self.listener_port = listener_port
 
     def start_listener(self):
-        self.connection_listener().join()
+        self.server = person_server.PersonServer(self.listener_port)
+        self.server.connection_listener()
 
     def rendezvous_init(self):
-        self.rendezvous = RendezvousClient(('localhost', 5555), self.listener_port)
+        self.rendezvous = rendezvous_client.RendezvousClient(('localhost', 5555), self.listener_port)
         self.rendezvous.client_init()
 
     def clients_init(self):
@@ -28,7 +27,7 @@ class Person(Server):
                 for connection in self.rendezvous.connections:
                     try:
                         if connection not in self.persons:
-                            client = PersonClient(connection)
+                            client = person_client.PersonClient(connection)
                             self.persons.append(client)
                     except Exception as e:
                         print(e)
@@ -42,14 +41,6 @@ class Person(Server):
         thread = threading.Thread(target = connection_loop)
         thread.start()
         return thread
-
-    def peer_send_command(self, peer_socket):
-        command = b'JAMES'
-        try:
-            peer_socket.sendall(command)
-            return True
-        except:
-            return False
 
 print('INITIALIZING')
 client = Person(int(sys.argv[1]))
