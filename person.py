@@ -1,52 +1,23 @@
-import time
-import threading
 import sys
+import time
 from actors import rendezvous_client
-from actors import person_client 
 from actors import person_server
+from actors import person_manager
 
-class Person:
-    PEER_HELLO = 'HELLO PEER'
-    PEER_GET = ''
-    persons = []
+listener_port = int(sys.argv[1])
 
-    def __init__(self, listener_port):
-        self.listener_port = listener_port
+print('RENDEZVOUS CLIENT INIT')
+rendezvous = rendezvous_client.RendezvousClient(('localhost', 5555), listener_port)
+rendezvous.client_init()
 
-    def start_listener(self):
-        self.server = person_server.PersonServer(self.listener_port)
-        self.server.connection_listener()
+print('PERSON CLIENT MANAGER INIT')
+person_client_manager = person_manager.PersonManager(rendezvous.connections)
+person_client_manager.clients_init()
 
-    def rendezvous_init(self):
-        self.rendezvous = rendezvous_client.RendezvousClient(('localhost', 5555), self.listener_port)
-        self.rendezvous.client_init()
+print('PERSON SERVER INIT')
+server = person_server.PersonServer(listener_port)
+server.connection_listener()
 
-    def clients_init(self):
-        def connection_loop():
-            while True:
-                for connection in self.rendezvous.connections:
-                    try:
-                        if connection not in self.persons:
-                            client = person_client.PersonClient(connection)
-                            self.persons.append(client)
-                    except Exception as e:
-                        print(e)
-                for person in self.persons:
-                    try:
-                        if person.client_init() is not None:
-                            print('connected to ' + str(person))
-                    except Exception as e:
-                        print(e)
-                time.sleep(1)
-        thread = threading.Thread(target = connection_loop)
-        thread.start()
-        return thread
-
-print('INITIALIZING')
-client = Person(int(sys.argv[1]))
-print('RENDEZVOUS CONNECTION')
-client.rendezvous_init()
-print('CONNECTING TO PEERS')
-client.clients_init()
-print('LISTENING TO PEERS')
-client.start_listener()
+while True:
+    person_client_manager.connections = rendezvous.connections
+    time.sleep(1)
