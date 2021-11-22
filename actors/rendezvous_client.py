@@ -16,6 +16,7 @@ class RendezvousClient(client.Client):
         return self.connection_handler()
 
     def client_get(self):
+        print('Rendezvous connections: ' + str(self.connections))
         time.sleep(1)
         return self.get
 
