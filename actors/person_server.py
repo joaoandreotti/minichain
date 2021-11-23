@@ -2,7 +2,7 @@ from network import server
 
 class PersonServer(server.Server):
     PEER_HELLO = 'HELLO PEER 00000'
-    PEER_GET = 'SEND TRANSACTION'
+    PEER_GET = 'SEND SOURCE DESTIN 00000'
 
     def __init__(self, listener_port):
         super(PersonServer, self).__init__(listener_port, self.PEER_HELLO, self.PEER_GET)
@@ -20,5 +20,4 @@ class PersonServer(server.Server):
             print(e)
 
     def get_handler(self, client_string, data):
-        print('transaction from (' + client_string + ') received: ' + data)
         return '\n'

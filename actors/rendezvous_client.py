@@ -16,12 +16,10 @@ class RendezvousClient(client.Client):
         return self.connection_handler()
 
     def client_get(self):
-        print('Rendezvous connections: ' + str(self.connections))
         time.sleep(1)
         return self.get
 
     def get_handler(self, data):
-        print('recv peers: ' + data)
         peer_list = [peer.replace('\n', '') for peer in data.split(';')]
         try:
             self.connections = [(peer.split(':')[0], int(peer.split(':')[1])) for peer in peer_list]

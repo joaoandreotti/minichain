@@ -1,10 +1,8 @@
 import hashlib
 
 class Ledger:
-    transaction_list = []
-
     def __init__(self):
-        pass
+        self.transaction_list = list()
 
     def __str__(self):
         return str(len(self.transaction_list)) + ';' + str(self.transaction_list)
@@ -13,4 +11,4 @@ class Ledger:
         return hashlib.sha256(str(self).encode()).hexdigest()
 
     def add_transaction(self, transaction):
-        self.transaction_list.append(str(transaction))
+        self.transaction_list.append(transaction)

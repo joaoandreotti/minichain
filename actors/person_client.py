@@ -3,7 +3,7 @@ import time
 
 class PersonClient(client.Client):
     PERSON_HELLO = 'HELLO PEER 00000'
-    PERSON_GET = 'SEND TRANSACTION'
+    PERSON_GET = 'SEND SOURCE DESTIN 00010'
 
     def __init__(self, server_tuple):
         super(PersonClient, self).__init__(server_tuple, self.PERSON_HELLO, self.PERSON_GET)

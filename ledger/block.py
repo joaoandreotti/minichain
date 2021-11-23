@@ -1,6 +1,6 @@
 import hashlib
-from ledger import *
-from transaction import *
+from ledger import ledger
+from ledger import transaction
 
 class Block:
     def __init__(self, number, previous_hash, transactions_hash, ledger):
@@ -11,8 +11,8 @@ class Block:
         self.proof_of_work = 0
 
     def __str__(self):
-        return str(self.number) + ';' + self.previous_hash + ';' + \
-                self.transactions_hash + ';' + str(self.proof_of_work)
+        return str(self.number).zfill(4) + ';' + self.previous_hash.zfill(64)\
+            + ';' + self.transactions_hash.zfill(64) + ';' + str(self.proof_of_work).zfill(10)
 
     def __repr__(self):
         return hashlib.sha256(str(self).encode()).hexdigest()
@@ -22,7 +22,7 @@ class Block:
             self.proof_of_work += 1
 
     def valid_block(self):
-        difficult = 6
+        difficult = 4
         if repr(self)[:difficult] == '0'*difficult:
             return True
         return False

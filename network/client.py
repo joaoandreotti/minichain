@@ -17,14 +17,10 @@ class Client:
     def connection_handler(self):
         def handler(client):
             try:
-                print('sending: ' + self.hello)
                 client.sendall(self.hello.encode())
-                print('hello sent')
                 while True:
                     self.client_get()
-                    print('sending: ' + self.get)
                     client.send(self.get.encode())
-                    print('get sent')
                     data = self.receive_command(client)
                     self.get_handler(data)
             except Exception as e:
