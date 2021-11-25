@@ -16,6 +16,7 @@ def calculate_money():
     while True:
         for block in server.block_list:
             for transaction in block.ledger.transaction_list:
+                print('block: ' + str(block))
                 if transaction.source not in money_map:
                     money_map[transaction.source] = 0
                 if transaction.destination not in money_map:

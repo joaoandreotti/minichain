@@ -33,7 +33,7 @@ class MinerServer(server.Server):
         self.current_ledger.add_transaction(current_transaction)
         if self.transaction_queue == 1:
             new_block = block.Block(len(self.block_list),\
-                repr(self.block_list[-1:]),\
+                repr(self.block_list[-1]),\
                 repr(self.current_ledger), self.current_ledger)
             new_block.generate_valid_block()
             self.block_list.append(new_block)
